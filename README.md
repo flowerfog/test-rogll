@@ -8,9 +8,10 @@ well-grouped validation score over model complexity.
 
 At the last known heel row, `TVT_input` supplies a reliable TVT anchor. A first
 trajectory estimate can be extrapolated from that anchor using the local
-heel relationship between TVT and Z. A small histogram gradient-boosting model
-can then learn the remaining correction from relative trajectory geometry,
-absolute location, horizontal-well GR, and the paired typewell GR curve.
+heel relationship between TVT and Z. A compact PyTorch multilayer perceptron
+running on CUDA then learns the remaining correction from relative trajectory
+geometry, absolute location, horizontal-well GR, and the paired typewell GR
+curve. Inputs and residual labels are standardized from each training fold only.
 
 The model never uses a horizontal well's target `TVT` to create features. That
 column is read only after feature construction to form the training residual.
@@ -66,26 +67,33 @@ python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 ```
 
-Run the same first experiment configured for AutoDL:
+Run the CUDA experiment configured for AutoDL. The worker supplies the actual
+data root, while the command fails closed if CUDA is unavailable:
 
 ```bash
-export ROGII_DATA_ROOT=/root/autolab/data
-python train_eval.py --folds 5 --max-train-rows-per-well 512 --max-iter 160
+export ROGII_DATA_ROOT=/root/autodl-tmp/rogii-wellbore-geology-prediction
+python train_eval.py --folds 5 --max-train-rows-per-well 512 \
+  --max-iter 120 --batch-size 8192 --hidden-width 128 --device cuda \
+  --metrics-output output/metrics.json
 ```
 
 On Windows PowerShell, point at the observed local data without copying it:
 
 ```powershell
 $env:ROGII_DATA_ROOT = "E:\rogii-wellbore-geology-prediction"
-python train_eval.py --folds 5 --max-train-rows-per-well 512 --max-iter 160
+python train_eval.py --folds 5 --max-train-rows-per-well 512 \
+  --max-iter 120 --batch-size 8192 --hidden-width 128 --device cuda
 ```
 
 Fit on all training wells and create predictions aligned to the supplied
 sample submission. Keep the output outside this source repository:
 
 ```bash
-python predict.py --output /root/autolab/output/rogii_suffix_hgb_v1.csv \
-  --max-train-rows-per-well 512 --max-iter 160
+python predict.py --output /root/autodl-tmp/rogii_suffix_torch_mlp_v1.csv \
+  --max-train-rows-per-well 512 --max-iter 120 --batch-size 8192 \
+  --hidden-width 128 --device cuda
 ```
 
-Both entry points print a JSON summary of the configuration and result.
+Both entry points print a JSON summary of the configuration and result. The OOF
+entry point also writes `output/metrics.json`, which the worker publishes as a
+structured result artifact.

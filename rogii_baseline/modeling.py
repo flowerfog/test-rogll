@@ -1,4 +1,4 @@
-"""Grouped out-of-fold evaluation and full-data prediction."""
+"""Grouped out-of-fold evaluation and CUDA residual modeling."""
 
 from __future__ import annotations
 
@@ -8,8 +8,9 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import HistGradientBoostingRegressor
+import torch
 from sklearn.model_selection import KFold
+from torch import nn
 
 from .data import WellPaths, discover_wells, read_well
 from .features import FEATURE_NAMES, FeatureSet, build_features
@@ -18,11 +19,12 @@ from .features import FEATURE_NAMES, FeatureSet, build_features
 @dataclass(frozen=True)
 class ModelConfig:
     max_train_rows_per_well: int = 512
-    max_iter: int = 160
-    learning_rate: float = 0.06
-    max_leaf_nodes: int = 31
-    min_samples_leaf: int = 40
-    l2_regularization: float = 0.2
+    max_iter: int = 120
+    learning_rate: float = 1e-3
+    batch_size: int = 8192
+    hidden_width: int = 128
+    weight_decay: float = 1e-4
+    device: str = "cuda"
     random_state: int = 20260723
 
 
@@ -30,6 +32,52 @@ class ModelConfig:
 class TrainingSample:
     x: np.ndarray
     residual: np.ndarray
+
+
+class ResidualMLP(nn.Module):
+    def __init__(self, input_width: int, hidden_width: int) -> None:
+        super().__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(input_width, hidden_width),
+            nn.SiLU(),
+            nn.Linear(hidden_width, hidden_width),
+            nn.SiLU(),
+            nn.Linear(hidden_width, 1),
+        )
+
+    def forward(self, values: torch.Tensor) -> torch.Tensor:
+        return self.layers(values).squeeze(-1)
+
+
+@dataclass
+class TorchResidualRegressor:
+    network: ResidualMLP
+    x_mean: np.ndarray
+    x_scale: np.ndarray
+    y_mean: float
+    y_scale: float
+    device: torch.device
+    prediction_batch_size: int
+
+    def predict(self, values: np.ndarray) -> np.ndarray:
+        normalized = np.clip(
+            (np.asarray(values, dtype=np.float32) - self.x_mean) / self.x_scale,
+            -12.0,
+            12.0,
+        )
+        outputs: list[np.ndarray] = []
+        self.network.eval()
+        with torch.inference_mode():
+            for start in range(0, len(normalized), self.prediction_batch_size):
+                batch = torch.as_tensor(
+                    normalized[start : start + self.prediction_batch_size],
+                    dtype=torch.float32,
+                    device=self.device,
+                )
+                prediction = self.network(batch)
+                outputs.append(prediction.cpu().numpy())
+        standardized = np.concatenate(outputs) if outputs else np.empty(0)
+        return standardized.astype(np.float64) * self.y_scale + self.y_mean
 
 
 def _even_sample(features: FeatureSet, limit: int) -> TrainingSample:
@@ -61,32 +109,86 @@ def prepare_training_samples(
     return samples
 
 
+def _resolve_device(name: str) -> torch.device:
+    device = torch.device(name)
+    if device.type == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA was requested but torch.cuda.is_available() is false")
+    return device
+
+
 def fit_model(
     samples: dict[str, TrainingSample], well_ids: list[str], config: ModelConfig
-) -> HistGradientBoostingRegressor:
+) -> TorchResidualRegressor:
     if not well_ids:
         raise ValueError("At least one training well is required")
-    train_x = np.concatenate([samples[well_id].x for well_id in well_ids])
-    train_y = np.concatenate([samples[well_id].residual for well_id in well_ids])
-    model = HistGradientBoostingRegressor(
-        loss="squared_error",
-        learning_rate=config.learning_rate,
-        max_iter=config.max_iter,
-        max_leaf_nodes=config.max_leaf_nodes,
-        min_samples_leaf=config.min_samples_leaf,
-        l2_regularization=config.l2_regularization,
-        max_bins=127,
-        early_stopping=True,
-        validation_fraction=0.1,
-        n_iter_no_change=15,
-        random_state=config.random_state,
+    if config.max_iter < 1 or config.batch_size < 1:
+        raise ValueError("max_iter and batch_size must be positive")
+
+    train_x = np.concatenate([samples[well_id].x for well_id in well_ids]).astype(
+        np.float32, copy=False
     )
-    model.fit(train_x, train_y)
-    return model
+    train_y = np.concatenate(
+        [samples[well_id].residual for well_id in well_ids]
+    ).astype(np.float32, copy=False)
+    x_mean = train_x.mean(axis=0, dtype=np.float64).astype(np.float32)
+    x_scale = train_x.std(axis=0, dtype=np.float64).astype(np.float32)
+    x_scale = np.where(x_scale > 1e-6, x_scale, 1.0).astype(np.float32)
+    y_mean = float(train_y.mean(dtype=np.float64))
+    y_scale = max(float(train_y.std(dtype=np.float64)), 1e-6)
+    normalized_x = np.clip((train_x - x_mean) / x_scale, -12.0, 12.0)
+    normalized_y = (train_y - y_mean) / y_scale
+
+    device = _resolve_device(config.device)
+    torch.manual_seed(config.random_state)
+    if device.type == "cuda":
+        torch.cuda.manual_seed_all(config.random_state)
+        torch.set_float32_matmul_precision("high")
+    network = ResidualMLP(train_x.shape[1], config.hidden_width).to(device)
+    optimizer = torch.optim.AdamW(
+        network.parameters(),
+        lr=config.learning_rate,
+        weight_decay=config.weight_decay,
+    )
+    loss_function = nn.MSELoss()
+    x_tensor = torch.as_tensor(normalized_x, dtype=torch.float32, device=device)
+    y_tensor = torch.as_tensor(normalized_y, dtype=torch.float32, device=device)
+    generator = torch.Generator(device=device)
+    generator.manual_seed(config.random_state)
+
+    for epoch in range(1, config.max_iter + 1):
+        network.train()
+        permutation = torch.randperm(len(x_tensor), generator=generator, device=device)
+        epoch_squared_error = 0.0
+        for start in range(0, len(permutation), config.batch_size):
+            indices = permutation[start : start + config.batch_size]
+            optimizer.zero_grad(set_to_none=True)
+            prediction = network(x_tensor[indices])
+            loss = loss_function(prediction, y_tensor[indices])
+            loss.backward()
+            nn.utils.clip_grad_norm_(network.parameters(), max_norm=5.0)
+            optimizer.step()
+            epoch_squared_error += float(loss.detach()) * len(indices)
+        if epoch == 1 or epoch % 20 == 0 or epoch == config.max_iter:
+            mean_loss = epoch_squared_error / len(x_tensor)
+            print(
+                f"device={device} epoch={epoch}/{config.max_iter} "
+                f"standardized_mse={mean_loss:.8f}",
+                flush=True,
+            )
+
+    return TorchResidualRegressor(
+        network=network,
+        x_mean=x_mean,
+        x_scale=x_scale,
+        y_mean=y_mean,
+        y_scale=y_scale,
+        device=device,
+        prediction_batch_size=config.batch_size,
+    )
 
 
 def _score_wells(
-    model: HistGradientBoostingRegressor, wells: list[WellPaths]
+    model: TorchResidualRegressor, wells: list[WellPaths]
 ) -> tuple[float, int]:
     squared_error_sum = 0.0
     row_count = 0
@@ -142,6 +244,7 @@ def grouped_oof(
         "wells": len(wells),
         "folds": fold_results,
         "feature_count": len(FEATURE_NAMES),
+        "device": config.device,
     }
 
 
@@ -187,5 +290,5 @@ def predict_hidden_test(
         "train_wells": len(train_wells),
         "test_wells": len(test_wells),
         "feature_count": len(FEATURE_NAMES),
+        "device": config.device,
     }
-
