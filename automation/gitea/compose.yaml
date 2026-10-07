@@ -1,0 +1,19 @@
+name: autolab-gitea
+
+services:
+  gitea:
+    image: "${GITEA_IMAGE:?Set GITEA_IMAGE to a reviewed, pinned Gitea image tag}"
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: sqlite3
+      GITEA__server__ROOT_URL: http://127.0.0.1:3000/
+      GITEA__service__DISABLE_REGISTRATION: "true"
+    volumes:
+      - ./data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:2222:22"

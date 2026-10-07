@@ -1,0 +1,21 @@
+You are bootstrapping a completely empty source repository for the ROGII Wellbore Geology Prediction competition. There are deliberately no historical solution scripts to reuse.
+
+Competition objective: predict TVT (True Vertical Thickness) for the unknown toe/evaluation rows of horizontal wells. Each horizontal-well file contains MD, X, Y, Z, GR, and TVT_input. TVT_input is known in the heel prefix and missing in the toe. Each well has a typewell vertical reference curve containing TVT and GR. The score is pooled row-level RMSE across evaluation rows, lower is better. There are roughly 773 training wells and about 200 hidden test wells.
+
+Create one modest, reproducible baseline experiment from scratch. The first goal is a valid leakage-resistant pipeline and trustworthy grouped out-of-fold score, not model complexity. Split by well. Compute pooled RMSE from all held-out toe rows, not an unweighted average of per-well RMSE. Simulate the test condition during validation by masking a suffix while retaining a known prefix. Use heel TVT anchors, trajectory geometry, GR, and typewell information only in ways available at inference.
+
+The repository must contain at least:
+
+- README.md with the hypothesis, data contract, validation method, and run commands.
+- requirements.txt with minimal dependencies.
+- Python source for training/evaluation and hidden-test prediction.
+- lightweight CPU tests for data loading and pooled RMSE behavior.
+- {manifest_path}, enabled, with a unique lowercase job_id and a command that runs the first AutoDL experiment. It must be a JSON object with exactly these fields: `version` (integer 1), `job_id` (string), `enabled` (boolean), `command` (non-empty JSON array of argument strings; never a shell command string), `timeout_seconds` (integer), `gpu` (string such as `"0"`), `artifacts` (JSON array, which may be empty), `metrics_file` (relative string or null), `notes` (string), and `env` (JSON object containing only approved string environment values). Use `ROGII_DATA_ROOT={autodl_data_root}` and `PYTHONUNBUFFERED=1` in `env`.
+
+On AutoDL, data is outside Git at `{autodl_data_root}`. Source code must read ROGII_DATA_ROOT, defaulting to that path only when the environment variable is absent. Do not copy data, CSV outputs, notebooks, model files, credentials, GitHub workflows, or competition submissions into the repository. Do not access the network, submit to Kaggle, commit, or push. Run only short CPU checks during bootstrap; GPU execution belongs to the worker.
+
+Return decision=proposed and list every generated file exactly in changed_files. next_job_id must equal the enabled job_id in {manifest_path}.
+
+Observed local data inventory and representative schemas:
+
+{inventory_json}

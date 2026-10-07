@@ -1,0 +1,51 @@
+[worker]
+id = "autodl-gpu-01"
+poll_seconds = 60
+state_dir = "/root/autolab/state/autodl"
+work_dir = "/root/autolab/work"
+manifest_path = "autodl/job.json"
+
+[source]
+url = "git@github.com:YOUR_ACCOUNT/rogii-wellbore-geology-prediction.git"
+branch = "experiments"
+mirror_dir = "/root/autolab/cache/source.git"
+
+[results]
+url = "git@github.com:YOUR_ACCOUNT/rogii-wellbore-results.git"
+branch = "main"
+checkout_dir = "/root/autolab/cache/results"
+author_name = "AutoDL Worker"
+author_email = "autodl-worker@example.invalid"
+
+[execution]
+allowed_programs = ["python", "python3", "torchrun"]
+allowed_job_env = ["PYTHONUNBUFFERED", "OMP_NUM_THREADS", "TOKENIZERS_PARALLELISM", "ROGII_DATA_ROOT"]
+max_timeout_seconds = 86400
+max_artifact_bytes = 104857600
+max_log_bytes = 104857600
+min_free_disk_bytes = 10737418240
+require_gpu = true
+max_gpu_memory_used_mb = 1024
+inherit_env = [
+  "PATH",
+  "HOME",
+  "USER",
+  "LANG",
+  "LC_ALL",
+  "TMPDIR",
+  "LD_LIBRARY_PATH",
+  "CUDA_HOME",
+  "CONDA_PREFIX",
+  "VIRTUAL_ENV",
+  "PYTHONPATH"
+]
+
+[execution.env]
+PYTHONUNBUFFERED = "1"
+
+[codex]
+enabled = true
+command = ["codex", "exec"]
+model = ""
+timeout_seconds = 1800
+ignore_user_config = false

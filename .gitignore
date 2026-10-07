@@ -1,0 +1,62 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Competition data and generated experiment outputs
+/train/
+/test/
+/output/
+/oof_exports/
+/.smoke/
+/tmp/
+/a/
+*.csv
+*.npz
+*.npy
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.zip
+*.pptx
+*.pkl
+*.pqt
+*.parquet
+*.joblib
+*.h5
+*.safetensors
+*.bin
+*.pdf
+
+# Local source archives and large research handoff bundles
+/archive (3)/
+/handoff_*/
+/rogii-viewer-main/
+/source-next/
+/first_place_cleanroom_behavioral_reproduction (2)/
+
+# Generated notebooks and experiment bookkeeping
+*.ipynb_checkpoints/
+_inspect_*.txt
+_*_package_stage/
+*_stage/
+*.pkl
+
+# Local automation state and secrets
+/automation/runtime/
+/automation/config/*.toml
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+*.log
+.env
+*.key
+*.pem
+
+# Editor and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

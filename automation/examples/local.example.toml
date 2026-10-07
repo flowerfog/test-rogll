@@ -1,0 +1,55 @@
+[watcher]
+poll_seconds = 60
+state_dir = "C:/autolab/state/local"
+ignore_existing_on_first_run = true
+stop_file = "STOP"
+
+[source]
+url = "git@github.com:YOUR_ACCOUNT/rogii-wellbore-geology-prediction.git"
+branch = "experiments"
+checkout_dir = "C:/autolab/checkouts/source-controller"
+
+[results]
+url = "git@github.com:YOUR_ACCOUNT/rogii-wellbore-results.git"
+branch = "main"
+checkout_dir = "C:/autolab/checkouts/results-reader"
+
+[codex]
+command = ["codex", "exec"]
+model = ""
+timeout_seconds = 3600
+ignore_user_config = false
+
+[proposal]
+# analysis: no edits; edit: leave a local proposal; autopush: commit and push automatically.
+mode = "analysis"
+max_rounds = 20
+result_statuses = ["succeeded", "failed", "rejected"]
+manifest_path = "autodl/job.json"
+author_name = "Local Codex Controller"
+author_email = "local-codex@example.invalid"
+allowed_change_globs = [
+  "*.py",
+  "**/*.py",
+  "*.json",
+  "**/*.json",
+  "*.md",
+  "**/*.md",
+  "*.toml",
+  "**/*.toml",
+  "*.yaml",
+  "**/*.yaml",
+  "*.yml",
+  "**/*.yml"
+]
+denied_change_globs = [
+  ".git*",
+  ".github/workflows/**",
+  "automation/autodl_worker.py",
+  "automation/local_watcher.py",
+  "automation/services/**",
+  "automation/gitea/**",
+  "**/*.key",
+  "**/*.pem",
+  "**/.env"
+]

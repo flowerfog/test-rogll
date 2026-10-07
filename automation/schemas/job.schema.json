@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AutoDL experiment job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "job_id", "enabled", "command", "timeout_seconds", "gpu", "artifacts"],
+  "properties": {
+    "version": {"const": 1},
+    "job_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$"},
+    "enabled": {"type": "boolean"},
+    "command": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "timeout_seconds": {"type": "integer", "minimum": 1},
+    "gpu": {"type": "string", "pattern": "^\\d+(,\\d+)*$"},
+    "artifacts": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "metrics_file": {"type": ["string", "null"]},
+    "notes": {"type": "string"},
+    "env": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    }
+  }
+}

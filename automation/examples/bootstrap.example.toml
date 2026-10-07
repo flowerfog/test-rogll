@@ -1,0 +1,28 @@
+[bootstrap]
+state_dir = "C:/autolab/state/bootstrap"
+checkout_dir = "C:/autolab/checkouts/source-controller"
+local_data_root = "E:/rogii-wellbore-geology-prediction"
+autodl_data_root = "/root/autolab/data"
+task_files = [
+  "E:/rogii-wellbore-geology-prediction/AI_wellbore_geology_prediction_task_en.pptx",
+  "E:/rogii-wellbore-geology-prediction/sample_submission.csv"
+]
+manifest_path = "autodl/job.json"
+max_generated_bytes = 10485760
+author_name = "Codex Bootstrap"
+author_email = "codex-bootstrap@example.invalid"
+
+[source]
+url = "https://github.com/flowerfog/test-rogll.git"
+branch = "experiments"
+
+[codex]
+command = ["codex", "exec"]
+model = ""
+timeout_seconds = 3600
+ignore_user_config = false
+
+[execution]
+allowed_programs = ["python", "python3", "torchrun"]
+allowed_job_env = ["PYTHONUNBUFFERED", "OMP_NUM_THREADS", "TOKENIZERS_PARALLELISM", "ROGII_DATA_ROOT"]
+max_timeout_seconds = 86400

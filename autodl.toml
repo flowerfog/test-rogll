@@ -1,0 +1,53 @@
+[worker]
+id = "autodl-gpu-01"
+poll_seconds = 60
+state_dir = "/root/autodl-tmp/rogii-autolab/state/autodl"
+work_dir = "/root/autodl-tmp/rogii-autolab/work"
+manifest_path = "autodl/job.json"
+
+[source]
+url = "https://github.com/flowerfog/test-rogll.git"
+branch = "experiments"
+mirror_dir = "/root/autodl-tmp/rogii-autolab/cache/source.git"
+
+[results]
+url = "git@github.com:flowerfog/docs-rogll.git"
+branch = "main"
+checkout_dir = "/root/autodl-tmp/rogii-autolab/cache/results"
+author_name = "AutoDL Worker"
+author_email = "autodl-worker@example.invalid"
+
+[execution]
+allowed_programs = ["python", "python3", "torchrun"]
+allowed_job_env = ["PYTHONUNBUFFERED", "OMP_NUM_THREADS", "TOKENIZERS_PARALLELISM", "ROGII_DATA_ROOT"]
+max_timeout_seconds = 86400
+max_artifact_bytes = 104857600
+max_log_bytes = 104857600
+min_free_disk_bytes = 10737418240
+require_gpu = true
+max_gpu_memory_used_mb = 1024
+inherit_env = [
+  "PATH",
+  "HOME",
+  "USER",
+  "LANG",
+  "LC_ALL",
+  "TMPDIR",
+  "LD_LIBRARY_PATH",
+  "CUDA_HOME",
+  "CONDA_PREFIX",
+  "VIRTUAL_ENV",
+  "PYTHONPATH"
+]
+
+[execution.env]
+PYTHONUNBUFFERED = "1"
+ROGII_DATA_ROOT = "/root/autodl-tmp/rogii-wellbore-geology-prediction"
+TMPDIR = "/root/autodl-tmp/rogii-autolab/tmp"
+
+[codex]
+enabled = true
+command = ["codex", "exec"]
+model = ""
+timeout_seconds = 1800
+ignore_user_config = false

@@ -1,0 +1,21 @@
+{
+  "level": "behavioral reproduction from writeup only",
+  "version": "0719_V1",
+  "repeat": 0,
+  "fold": 1,
+  "seed": 0,
+  "train_wells": 1,
+  "valid_wells": 1,
+  "best_bin_rmse": 13.42488458206128,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 9.168119430541992,
+      "lr": 5e-07,
+      "loss": 7.863509178161621,
+      "bin_rmse": 13.42488458206128,
+      "bin_mae": 7.442679036458333,
+      "bins": 150
+    }
+  ]
+}

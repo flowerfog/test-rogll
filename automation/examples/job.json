@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "job_id": "tvt-baseline-v1",
+  "enabled": false,
+  "command": [
+    "python",
+    "train_experiment.py",
+    "--config",
+    "configs/tvt-baseline-v1.json"
+  ],
+  "timeout_seconds": 21600,
+  "gpu": "0",
+  "artifacts": [
+    "output/tvt-baseline-v1/metrics.json",
+    "output/tvt-baseline-v1/report.html",
+    "output/tvt-baseline-v1/submission.csv"
+  ],
+  "metrics_file": "output/tvt-baseline-v1/metrics.json",
+  "notes": "Enable only after the command and paths are valid on a clean checkout.",
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  }
+}

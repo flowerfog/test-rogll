@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision", "summary", "findings", "risk"],
+  "properties": {
+    "decision": {"type": "string", "enum": ["approved", "rejected"]},
+    "summary": {"type": "string"},
+    "risk": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "blocking", "file", "line", "message"],
+        "properties": {
+          "severity": {"type": "string", "enum": ["info", "low", "medium", "high", "critical"]},
+          "blocking": {"type": "boolean"},
+          "file": {"type": "string"},
+          "line": {"type": ["integer", "null"], "minimum": 1},
+          "message": {"type": "string"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision", "summary", "changed_files", "validation", "next_job_id"],
+  "properties": {
+    "decision": {"type": "string", "enum": ["no_change", "proposed", "blocked"]},
+    "summary": {"type": "string"},
+    "changed_files": {"type": "array", "items": {"type": "string"}},
+    "validation": {"type": "array", "items": {"type": "string"}},
+    "next_job_id": {"type": ["string", "null"]}
+  }
+}

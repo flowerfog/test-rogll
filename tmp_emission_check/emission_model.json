@@ -1,0 +1,20 @@
+{
+  "feature_names": [
+    "bias",
+    "abs_value_delta",
+    "value_delta_sq",
+    "abs_slope_delta",
+    "slope_delta_sq",
+    "abs_offset"
+  ],
+  "coefficients": [
+    9.54937472801708,
+    -1.38078974475624,
+    0.13193390583938025,
+    0.1895597728410696,
+    -0.0037168327355713536,
+    -6.675932483588625
+  ],
+  "training_wells": 773,
+  "training_rows": 790056
+}

@@ -1,0 +1,118 @@
+{
+  "experiment": "metric_lineage_audit_v157",
+  "root": ".",
+  "files_scanned": 1692,
+  "files_with_errors": [
+    {
+      "path": "full_oof_cp_endpoints.parquet",
+      "status": "error",
+      "error": "RuntimeError('pyarrow is unavailable; parquet audit requires pyarrow')"
+    },
+    {
+      "path": "oof_exports\\raw_single_well_inputs_v2\\metadata\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "output\\candidate_tvtbin_emission_rank_audit_v1\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "output\\event_aware_neighbor_transfer_gateway_v0\\load_failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "output\\geology_event_residual_gateway_v1\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "output\\hardwell_geology_signal_audit_v0\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "output\\physics_prefix_replay_endpoint_p0\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke\\tvt_drift_zero_learning_dp_v0\\blend_folds.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke\\tvt_drift_zero_learning_dp_v0\\blend_scores.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke\\tvt_drift_zero_learning_dp_v0\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke\\tvt_drift_zero_learning_dp_v0\\standalone_folds.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke2\\tvt_drift_zero_learning_dp_v0\\blend_folds.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke2\\tvt_drift_zero_learning_dp_v0\\blend_scores.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke2\\tvt_drift_zero_learning_dp_v0\\failures.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    },
+    {
+      "path": "tmp\\tvt_dp_smoke2\\tvt_drift_zero_learning_dp_v0\\standalone_folds.csv",
+      "status": "error",
+      "error": "EmptyDataError('No columns to parse from file')"
+    }
+  ],
+  "canonical_scale_files": [
+    {
+      "path": "full_oof_cp_crossfit_viewer.csv",
+      "kind": "csv",
+      "rows": 3783989,
+      "columns": [
+        "id",
+        "tvt"
+      ],
+      "id_unique": true,
+      "id_missing": 0
+    },
+    {
+      "path": "output\\tail_only_reanchored_neighbor_gateway_v0\\tail_only_oof.csv.gz",
+      "kind": "csv",
+      "rows": 3783989,
+      "columns": [
+        "well",
+        "fold",
+        "row_idx",
+        "truth",
+        "base",
+        "distance",
+        "prediction",
+        "strict_far_only_prediction",
+        "shuffled_prediction"
+      ]
+    }
+  ],
+  "sample_or_submission": null,
+  "gates": {
+    "canonical_773_file_exists": true,
+    "canonical_464_file_exists": false,
+    "no_scan_errors": false
+  },
+  "next": "Freeze the exact 773-row endpoint and evaluate all candidates on its IDs"
+}

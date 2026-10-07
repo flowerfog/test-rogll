@@ -1,0 +1,129 @@
+{
+  "sources": {
+    "ok": true,
+    "files": [
+      {
+        "file": "seq_NN_cfg.py",
+        "expected": "8FAFDE9D2D24D6B6747D9DC6D823614C9BDF14D2B642DD641B4F38883F0663E9",
+        "actual": "8FAFDE9D2D24D6B6747D9DC6D823614C9BDF14D2B642DD641B4F38883F0663E9",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_dataset.py",
+        "expected": "22CE505940CBEB366D17CFC0F19C33624D98221C56675A7F3E2D93D86BA1D22E",
+        "actual": "22CE505940CBEB366D17CFC0F19C33624D98221C56675A7F3E2D93D86BA1D22E",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_data_prep.py",
+        "expected": "CBBBA8E8DBEB5FA097996CAE9F874653BE411179D5AD73571AB9CAC20A86A644",
+        "actual": "CBBBA8E8DBEB5FA097996CAE9F874653BE411179D5AD73571AB9CAC20A86A644",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_data_prep_pf_opt.py",
+        "expected": "93E92EABFE6E47D0EA1F2DD87841952139FD2D0E3FED3577A4B689418150A2CD",
+        "actual": "93E92EABFE6E47D0EA1F2DD87841952139FD2D0E3FED3577A4B689418150A2CD",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_geo_prior.py",
+        "expected": "B61C6351041D5D2DAE2A7861530F933E3B102E1C6D80D3FE2F4A61FA1F0368EF",
+        "actual": "B61C6351041D5D2DAE2A7861530F933E3B102E1C6D80D3FE2F4A61FA1F0368EF",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_main.py",
+        "expected": "478B6FF4B4898F20963F2463E3D6A7502033DBBE30B74081CF1523E082B8CC54",
+        "actual": "478B6FF4B4898F20963F2463E3D6A7502033DBBE30B74081CF1523E082B8CC54",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_models.py",
+        "expected": "A8965834E614D0DCBEB5FD98976A79CD1E2C52463A0E9EBC760AB2669F6014BE",
+        "actual": "A8965834E614D0DCBEB5FD98976A79CD1E2C52463A0E9EBC760AB2669F6014BE",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_pretrained_unet.py",
+        "expected": "40F12951E804B103142EBB244172F2A1762D1175A90F0F95E9AD1FB3CFF69F58",
+        "actual": "40F12951E804B103142EBB244172F2A1762D1175A90F0F95E9AD1FB3CFF69F58",
+        "ok": true
+      },
+      {
+        "file": "seq_NN_train.py",
+        "expected": "EBAA2A41B4CB7460EA246A0F7049D7F1F2613BF2AA741BA878FEC260F85D80C9",
+        "actual": "EBAA2A41B4CB7460EA246A0F7049D7F1F2613BF2AA741BA878FEC260F85D80C9",
+        "ok": true
+      }
+    ]
+  },
+  "reference": {
+    "ok": true,
+    "reference_dir": "archive (3)",
+    "log_oof_rmse": 5.091,
+    "files": [
+      {
+        "file": "cfg.pkl",
+        "exists": true,
+        "size": 16473,
+        "expected_size": 16473,
+        "size_ok": true,
+        "sha256": "ED99CDED75DBD3BEC8AB29D450238A1134EA8C28CD8DC1A0EA34E67B575DA985",
+        "expected_sha256": "ED99CDED75DBD3BEC8AB29D450238A1134EA8C28CD8DC1A0EA34E67B575DA985",
+        "hash_ok": true
+      },
+      {
+        "file": "models.pkl",
+        "exists": true,
+        "size": 3220117304,
+        "expected_size": 3220117304,
+        "size_ok": true,
+        "sha256": null,
+        "expected_sha256": "677475C3D8F1E0C4A18BCA9381469CD466F79CA0A3E0FA8D1686C74932704F45",
+        "hash_ok": null
+      },
+      {
+        "file": "oof_df.pqt",
+        "exists": true,
+        "size": 131989244,
+        "expected_size": 131989244,
+        "size_ok": true,
+        "sha256": "3D60B30E4AC4BB98F32BF9BA3C5CC0915334D8A30D9FF4C993AA36BA7D780EF8",
+        "expected_sha256": "3D60B30E4AC4BB98F32BF9BA3C5CC0915334D8A30D9FF4C993AA36BA7D780EF8",
+        "hash_ok": true
+      },
+      {
+        "file": "seq_nn.log",
+        "exists": true,
+        "size": 113385,
+        "expected_size": 113385,
+        "size_ok": true,
+        "sha256": "C18164818FFCD8DEC78136DAA1E2F33940B397BA5BFA8BBBFDDE398F90B7A15E",
+        "expected_sha256": "C18164818FFCD8DEC78136DAA1E2F33940B397BA5BFA8BBBFDDE398F90B7A15E",
+        "hash_ok": true
+      },
+      {
+        "file": "submission.csv",
+        "exists": true,
+        "size": 424408,
+        "expected_size": 424408,
+        "size_ok": true,
+        "sha256": "256A6F07A99D54AF18C8AFA7C0B7E296BEC0380F234482A25A7EF6CBCB7B73BC",
+        "expected_sha256": "256A6F07A99D54AF18C8AFA7C0B7E296BEC0380F234482A25A7EF6CBCB7B73BC",
+        "hash_ok": true
+      },
+      {
+        "file": "submission_details.pqt",
+        "exists": true,
+        "size": 1030549,
+        "expected_size": 1030549,
+        "size_ok": true,
+        "sha256": "05B47E5E4F43DAD439CB521EF6DCF3EE421A935BC0D2DA8F076DCF2B716F708E",
+        "expected_sha256": "05B47E5E4F43DAD439CB521EF6DCF3EE421A935BC0D2DA8F076DCF2B716F708E",
+        "hash_ok": true
+      }
+    ]
+  },
+  "ok": true
+}
